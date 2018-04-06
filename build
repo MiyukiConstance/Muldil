@@ -1,0 +1,2 @@
+#!/bin/sh
+g++ 2hummm.cpp serialib.cpp -o out
