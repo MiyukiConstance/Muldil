@@ -11,8 +11,9 @@
 #include <stdio.h>
 #include "serialib.h"
 #include <stdlib.h>
-
-
+#include <ctype.h>
+#include <limits>  //   //?
+#include <stdio_ext.h>
 
 #define         DEVICE_PORT             "/dev/ttyO2"                  
 
@@ -27,11 +28,43 @@ char bigul4[]={0x4c, 0x49, 0x44, 0x00, 0x00, 0x4e, 0x04, 0x02, 0x00, 0x01, 0xff,
 // Set DMX Enable
 char bigul5[]={0x4c, 0x49, 0x44, 0x00, 0x00, 0x4e, 0x0e, 0x02, 0x00, 0x01, 0xff, 0x4c, 0x55, 0x4d};
 
+char name[14];
+char supname[14];
+
+
+
+int kbin() //keyboard Input
+
+{
+
+std::cin.get( name, 14);
+std::cin.clear();
+__fpurge(stdin);
+//std::cin.ignore(8, '\n') ; du stuff qui marche pas
+//fflush(stdin);     entoucas dans mon cas
+//__fpurge(stdin); original works
+
+return 1;
+}
 int main()
 {
 
-// New Stuff
+// New New Stuff
 
+printf("Welcome to the Linear Serie Automated Test \n \n");
+printf("Enter your Lid Name: \n");
+kbin();
+printf("Welcome %s \n Make your Supervivsor approve these settings \n", name);
+// insert stuff here
+
+printf("POULET! \n");
+printf("supervisor name:");
+kbin();
+printf("sup name = %s \n", name);
+supname = (name[14]);
+
+
+// /old  stuff  New Stuff
 int input = 66;
 char input2 = 28;
 char line [3];
