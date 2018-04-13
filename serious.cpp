@@ -38,6 +38,100 @@ int scan_keyascii()
   '\\', 'Z', 'X', 'C', 'V', 'B', 'N',   /* 49 */
    'M', ',', '.', '/',   0,    /* Right shift */
    '*',
+  0, /* Alt */
+   ' ', /* Space bar */
+  0, /* Caps lock */
+  0, /* 59 - F1 key ... > */
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0, /* < ... F10 */
+  0, /* 69 - Num lock*/
+  0, /* Scroll Lock */
+  0, /* Home key */
+  0, /* Up Arrow */
+  0, /* Page Up */
+   '-',
+  0, /* Left Arrow */
+  0,
+  0, /* Right Arrow */
+   '+',
+  0, /* 79 - End key*/
+  0, /* Down Arrow */
+  0, /* Page Down */
+  0, /* Insert Key */
+  0, /* Delete Key */
+  0,   0,   0,
+  0, /* F11 Key */
+  0, /* F12 Key */
+  0, /* All other keys are undefined */
+ };  
+  fd = open("/dev/input/event1", O_RDONLY); /* Open the event file */
+
+   if(fd == -1) 
+  {
+   printf("Can not open the input device!\n");
+   return 1;
+  }
+  else
+  { 
+   while (1) 
+   {
+    read(fd, &remote_event, sizeof(struct input_event)); /* read the last event */
+    if(remote_event.type == EV_KEY && remote_event.value == 1)
+    { /* Check if a key was pressed */
+    
+      if(remote_event.code==103) 
+      { /* Compare with key up code */
+       printf("Key up was pressed\n");
+      }
+      else if(remote_event.code==108) 
+      { /* Compare with key down code */
+       printf("Key down was pressed\n");
+      }
+      /* ... */
+      else
+      { 
+       if((remote_event.code <= 128) && (remote_event.code != 42))
+       {
+        i = kbdus[remote_event.code];
+       
+        if((i == '\n')||(i == '\r'))
+        {
+         buffer[k] = 0;
+         bar_value = k;
+         break;
+        }
+        else
+        {
+        
+         putchar(i);
+         buffer[k] = i;
+         k++;
+        }
+       }
+        }
+      
+    }
+   }
+  }
+
+   return 0;
+}
+
+int main()
+{  
+    char *buf;
+    char buf1[2],LCD_print[16],LCD_print1[16];
+    
+    int loc = 0;
+    int bytesread = 0;
+    int lcd_print;    
+    bzero(buffer,256);
+    printf("reading barcode:");
+    scan_keyascii();
+
+    return 0;
+}
+
    
    /// new stuff
    
