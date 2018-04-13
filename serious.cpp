@@ -124,15 +124,7 @@ int scan_keyascii()
 
 //int main()
 //{  
-    char *buf;
-    char buf1[2],LCD_print[16],LCD_print1[16];
     
-    int loc = 0;
-    int bytesread = 0;
-    int lcd_print;    
-    bzero(buffer,256);
-    printf("reading barcode:");
-    scan_keyascii();
 
 //    return 0;
 //}
@@ -186,6 +178,13 @@ return 1;
 int main()
 {
 
+char *buf;
+    char buf1[2],LCD_print[16],LCD_print1[16];
+    
+    int loc = 0;
+    int bytesread = 0;
+    int lcd_print;    
+	
 // New New Stuff
 
 printf("Welcome to the Linear Serie Automated Test \n \n");
@@ -211,6 +210,11 @@ std::cout << line << "\n";
 input2 = input;
 input = atoi (line);
 printf("the value of input is %d \n" ,input);
+
+	
+    bzero(buffer,256);
+    printf("reading barcode:");
+    scan_keyascii();
 
 // Now pour Modifier la valeur de ce que je desire configurer
 
