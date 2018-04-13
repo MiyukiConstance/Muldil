@@ -19,6 +19,16 @@
 
 #define         DEVICE_PORT             "/dev/ttyO2"  
 
+// Experimental Stuff ///
+
+#define PRUN_NUM
+
+
+//  ca ca onne une erreuree par ce que pas dasn foncr Printf("POULET MOTHERFUCKER");
+
+// Experimental Stuff End ///
+
+
 char buffer[256];
 char bar_value;
 
@@ -172,16 +182,18 @@ int main()
 
 // marche pfas std::cout << string(50, '\n');
 
-printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-printf("Welcome to the Linear Serie Automated Test \n \n");
-printf("Enter your Lid Name: \n\n");
+printf("\n\n\n\n\n");
+printf("Welcome to the LIDLUM Linear Serie Automated Test \n \n");
+printf("Enter your Operator Name: \n\n");
 kbin();
-printf("\nWelcome %s \n\nMake your Supervivsor approve these settings \n\n", name);
+printf("\nWelcome %s \n\nMake your Supervivsor approve these settings: \n\n", name);
 printf("The Program will read from a file and display the content \n");
 printf("The file will have all the information about the unit \n\n");
-printf("supervisor name:");
+printf("Enter your Supervisor Name:\a");
 kbin();
-printf("sup name = %s \n", name);
+//printf("sup name = %s \n", name);
+printf("Enter your Supervisor Password:\a");
+kbin();
 //supname = (name[14]);
 
 
@@ -189,18 +201,18 @@ printf("sup name = %s \n", name);
 int input = 66;
 char input2 = 28;
 char line [3];
-printf("Enter Primary(starting) Adress \n");
+printf("Enter Primary(starting) Adress: \n");
 std::cin.get( line, 3);
-std::cout << line << "\n";
+//std::cout << line << "\n";
 input2 = input;
 input = atoi (line);
-printf("the value of input is %d \n" ,input);
-printf("Reading the Bar Code Scanner \n");
+//printf("the value of input is %d \n" ,input);
+printf("Scan DUT (Device Under Test) Bar Code to Beiging Test \n");
 	
 //    bzero(buffer,256);
-    printf("reading barcode:");
+//    printf("reading barcode:");
     scan_keyascii();
-
+printf("\n\n\nThe Test is Executing\n");
 // Now pour Modifier la valeur de ce que je desire configurer
 
 bigul1[9]={input};
