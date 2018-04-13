@@ -122,8 +122,8 @@ int scan_keyascii()
    return 0;
 }
 
-int main()
-{  
+//int main()
+//{  
     char *buf;
     char buf1[2],LCD_print[16],LCD_print1[16];
     
@@ -134,8 +134,8 @@ int main()
     printf("reading barcode:");
     scan_keyascii();
 
-    return 0;
-}
+//    return 0;
+//}
 
    
    /// new stuff
