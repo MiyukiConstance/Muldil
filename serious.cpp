@@ -121,17 +121,6 @@ int scan_keyascii()
 
    return 0;
 }
-
-//int main()
-//{  
-    
-
-//    return 0;
-//}
-
-   
-   /// new stuff
-   
    
    
    /*!
@@ -175,25 +164,21 @@ __fpurge(stdin);
 
 return 1;
 }
+
+char string;
+
 int main()
 {
 
-char *buf;
-    char buf1[2],LCD_print[16],LCD_print1[16];
-    
-    int loc = 0;
-    int bytesread = 0;
-    int lcd_print;    
-	
-// New New Stuff
+// marche pfas std::cout << string(50, '\n');
 
+printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 printf("Welcome to the Linear Serie Automated Test \n \n");
-printf("Enter your Lid Name: \n");
+printf("Enter your Lid Name: \n\n");
 kbin();
-printf("Welcome %s \n Make your Supervivsor approve these settings \n", name);
-// insert stuff here
-
-printf("POULET! \n");
+printf("\nWelcome %s \n\nMake your Supervivsor approve these settings \n\n", name);
+printf("The Program will read from a file and display the content \n");
+printf("The file will have all the information about the unit \n\n");
 printf("supervisor name:");
 kbin();
 printf("sup name = %s \n", name);
@@ -204,15 +189,15 @@ printf("sup name = %s \n", name);
 int input = 66;
 char input2 = 28;
 char line [3];
-printf("Input man \n");
+printf("Enter Primary(starting) Adress \n");
 std::cin.get( line, 3);
 std::cout << line << "\n";
 input2 = input;
 input = atoi (line);
 printf("the value of input is %d \n" ,input);
-
+printf("Reading the Bar Code Scanner \n");
 	
-    bzero(buffer,256);
+//    bzero(buffer,256);
     printf("reading barcode:");
     scan_keyascii();
 
@@ -222,7 +207,7 @@ bigul1[9]={input};
 bigul2[9]={input};
 //bigul5
 
-printf(" The value of bigul1 9 is %d \n", bigul1[9]);
+//printf(" The value of bigul1 9 is %d \n", bigul1[9]);
 
 // End of New Stuff
 
