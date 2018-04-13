@@ -197,7 +197,7 @@ printf("POULET! \n");
 printf("supervisor name:");
 kbin();
 printf("sup name = %s \n", name);
-supname = (name[14]);
+//supname = (name[14]);
 
 
 // /old  stuff  New Stuff
