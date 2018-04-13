@@ -12,7 +12,12 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "serialib.h"
+#include <ctype.h>
+#include <limits>  //   //?
+#include <stdio_ext.h>
 
+#define         DEVICE_PORT             "/dev/ttyO2"  
 
 char buffer[256];
 char bar_value;
@@ -147,14 +152,7 @@ int main()
  \date      05/01/2011
  */
 
-#include <stdio.h>
-#include "serialib.h"
-#include <stdlib.h>
-#include <ctype.h>
-#include <limits>  //   //?
-#include <stdio_ext.h>
-
-#define         DEVICE_PORT             "/dev/ttyO2"                  
+                
 
 // Set dev adress
 char bigul1[]={0x4c, 0x49, 0x44, 0x00, 0x00, 0x4e, 0x03, 0x02, 0x00, 0x03, 0xff, 0x4c, 0x55, 0x4d};
