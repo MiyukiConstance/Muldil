@@ -16,17 +16,64 @@
 #include <ctype.h>
 #include <limits>  //   //?
 #include <stdio_ext.h>
+#include <dirent.h>
+
+// Driver header file
+#include <prussdrv.h>
+#include <pruss_intc_mapping.h>
+
+#include <arpa/inet.h>
+// #include <netinet/in.h>
+// #include <sys/types.h>
+// include <sys/socket.h>
+
+
 
 #define         DEVICE_PORT             "/dev/ttyO2"  
 
 // Experimental Stuff ///
 
-#define PRUN_NUM
+
+/*****************************************************************************
+* Local Macro Declarations                                                   *
+*****************************************************************************/
+
+#define PRU_NUM 	0
+
+// This pin is pin 3 on the P8 header
+#define DMX_PIN (6)
+#define DMX_CHANNELS (2)
+
+#define DMX_HALT_ADDR (0x100)
+#define DMX_CHANNELS_ADDR (0x101)
+#define DMX_PIN_ADDR (0x102)
+
+#define UDP_PORT (9930)
+#define UDP_BUFLEN (1024*64)
+
+#define AM33XX
+
+/*****************************************************************************
+* Local Function Declarations                                                *
+*****************************************************************************/
+
+static int LOCAL_exampleInit ();
+static void LOCAL_export_pin (int);
+static void LOCAL_unexport_pin (int);
+static void LOCAL_udp_listen ();
+static void diep (char*);
+
+/*****************************************************************************
+* Global Variable Definitions                                                *
+*****************************************************************************/
+
+static void *pruDataMem;
+static unsigned char *pruDataMem_byte;
+
+// end of weir  stuff for a while //
 
 
-//  ca ca onne une erreuree par ce que pas dasn foncr Printf("POULET MOTHERFUCKER");
-
-// Experimental Stuff End ///
+// #define PRUN_NUM
 
 
 char buffer[256];
@@ -278,3 +325,113 @@ bigul2[9]={input};
 
     return 0;
 }
+
+// weird stuff ///
+ 
+
+/*****************************************************************************
+* Local Function Definitions                                                 *
+*****************************************************************************/
+
+static void diep(char *s)
+{
+  perror(s);
+  exit(1);
+}
+
+static int LOCAL_exampleInit ()
+{  
+    int i;
+
+    prussdrv_map_prumem (PRUSS0_PRU0_DATARAM, &pruDataMem);
+    pruDataMem_byte = (unsigned char*) pruDataMem;
+
+    pruDataMem_byte[DMX_HALT_ADDR] = 0;
+    pruDataMem_byte[DMX_CHANNELS_ADDR] = DMX_CHANNELS;
+    pruDataMem_byte[DMX_PIN_ADDR] = DMX_PIN;
+
+    for (i = 0; i < DMX_CHANNELS; i++) {
+        pruDataMem_byte[i] = 0;
+    }
+
+    return(0);
+}
+
+static void LOCAL_export_pin (int pin) {
+	FILE *file;
+	char dir_file_name[50];
+
+	// Export the GPIO pin
+	file = fopen("/sys/class/gpio/export", "w");
+	fprintf(file, "%d", pin);
+	fclose(file);
+
+	// Let GPIO know what direction we are writing
+	sprintf(dir_file_name, "/sys/class/gpio/gpio%d/direction", pin);
+	file = fopen(dir_file_name, "w");
+	fprintf(file, "out");
+	fclose(file);
+}
+
+static void LOCAL_unexport_pin (int pin) {
+	FILE *file;
+	file = fopen("/sys/class/gpio/unexport", "w");
+	fwrite(&pin, 4, 1, file);
+	fclose(file);
+}
+
+// From http://www.abc.se/~m6695/udp.html
+static void LOCAL_udp_listen () {
+	struct sockaddr_in si_me, si_other;
+	int s, i, idx, slen=sizeof(si_other);
+	char buf[UDP_BUFLEN];
+	int channel, channels, value;
+	int packet_length;
+
+	if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1)
+		diep("socket");
+
+	memset((char *) &si_me, 0, sizeof(si_me));
+	si_me.sin_family = AF_INET;
+	si_me.sin_port = htons(UDP_PORT);
+	si_me.sin_addr.s_addr = htonl(INADDR_ANY);
+	if (bind(s, &si_me, sizeof(si_me))==-1)
+		diep("bind");
+
+	for (i=0; i<UDP_BUFLEN; i++) {
+		buf[i] = 0;
+	}
+
+	while (1) {
+		packet_length = recvfrom(s, buf, UDP_BUFLEN, 0, &si_other, &slen);
+		if (packet_length == -1) {
+			diep("recvfrom()");
+		}
+    sscanf(buf, "%d", &channels);
+
+    // server exit condition
+    if (channels < 0) {
+      break;
+    }
+
+    pruDataMem_byte[DMX_CHANNELS_ADDR] = channels+1;
+    channel = 0;
+		buf[packet_length] = 0;
+    idx = 0;
+    // skip past the channel definition
+    while (++idx < packet_length && buf[idx] != ' ');
+
+    while (idx < packet_length) {
+			sscanf(buf+idx, " %d", &value);
+      // printf("%3d ", value);
+      if (value > 0) printf("%d ", channel);
+			pruDataMem_byte[channel++] = value;
+      // skip past this integer in the packet
+      while (++idx < packet_length && buf[idx] != ' ');
+		}
+		printf("\n");
+ 	}
+
+	close(s);
+}
+
