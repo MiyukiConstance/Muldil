@@ -16,12 +16,16 @@
 #include <ctype.h>
 #include <limits>  //   //?
 #include <stdio_ext.h>
+// faire menage dans les includes a la fin
+#include <prussdrv.h>
+#include <pruss_intc_mapping.h>
+#define PRU_NUM 0 	// Using PRU 0
 
 #define         DEVICE_PORT             "/dev/ttyO2"  
 
 // Experimental Stuff ///
 
-#define PRUN_NUM
+
 
 
 //  ca ca onne une erreuree par ce que pas dasn foncr Printf("POULET MOTHERFUCKER");
@@ -157,8 +161,9 @@ char bigul4[]={0x4c, 0x49, 0x44, 0x00, 0x00, 0x4e, 0x04, 0x02, 0x00, 0x01, 0xff,
 char bigul5[]={0x4c, 0x49, 0x44, 0x00, 0x00, 0x4e, 0x0e, 0x02, 0x00, 0x01, 0xff, 0x4c, 0x55, 0x4d};
 
 char name[14];
-char supname[14];
-
+char usrName[14];
+char supName[14];
+char supPass[14];
 
 
 int kbin() //keyboard Input
@@ -186,15 +191,33 @@ printf("\n\n\n\n\n");
 printf("Welcome to the LIDLUM Linear Serie Automated Test \n \n");
 printf("Enter your Operator Name: \n\n");
 kbin();
+int stringLength = strlen(name);
+for (int i = 0; i < stringLength; i++) {
+usrName[i] = name[i];
+printf("Operator name = %s \n", usrName);
+}
+printf("stringLength = %d \n", stringLength);
+
+// le return de kbin c'est toujours name
 printf("\nWelcome %s \n\nMake your Supervivsor approve these settings: \n\n", name);
 printf("The Program will read from a file and display the content \n");
 printf("The file will have all the information about the unit \n\n");
 printf("Enter your Supervisor Name:\a");
 kbin();
-//printf("sup name = %s \n", name);
+stringLength = strlen(name);
+for (int i = 0; i < stringLength; i++){
+supName[i] = name[i];
+}
+printf("stringLength = %d \n", stringLength);
+printf("sup name = %s \n", name);
 printf("Enter your Supervisor Password:\a");
 kbin();
-//supname = (name[14]);
+stringLength = strlen(name);
+for (int i = 0; i < stringLength; i++) {
+supPass[i] = name[i];
+}
+printf("supPass = %s \n", supPass);
+
 
 
 // /old  stuff  New Stuff
@@ -203,10 +226,10 @@ char input2 = 28;
 char line [3];
 printf("Enter Primary(starting) Adress: \n");
 std::cin.get( line, 3);
-//std::cout << line << "\n";
+std::cout << line << "\n";
 input2 = input;
 input = atoi (line);
-//printf("the value of input is %d \n" ,input);
+printf("the value of input is %d \n" ,input);
 printf("Scan DUT (Device Under Test) Bar Code to Beiging Test \n");
 	
 //    bzero(buffer,256);
@@ -239,11 +262,7 @@ bigul2[9]={input};
         return Ret;                                                         // ... quit the application
     }
     printf ("Serial port opened successfully !\n");
-
-
-
-
-    // Write the AT command on the serial port
+    // Write Lidlum command on the serial port
 
     Ret=LS.Write (bigul1, 14);
     Ret=LS.Write (bigul2, 14);
@@ -254,7 +273,8 @@ bigul2[9]={input};
         printf ("Error while writing data\n");                              // ... display a message ...
         return Ret;                                                         // ... quit the application.
     }
-    printf ("Write operation is successful \n");
+    printf ("POulet Write operation is successful \n");
+    printf ("Why Stall \n ca a lair quil faut le backslas n abs \n");
 
 
 
@@ -273,9 +293,32 @@ bigul2[9]={input};
 
 
     // Close the connection with the device
-
     LS.Close();
+
+printf("This is where we mess with the pruss \n");
+
+// Second part of the test, Pruss Stuff for the DMX
+// Initialize structure used by prussdrv_pruintc_intc
+// PRUSS_INTC_INITDATA is found in the pruss_intc_mapping.h
+
+tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
+// Allocate and initialyze Memory
+prussdrv_init ();
+prussdrv_open (PRU_EVTOUT_0);
+// Maps PRU Interrupts
+prussdrv_pruintc_init(&pruss_intc_initdata); 
+// Load and Execute the PRU Programm on the PRU
+prussdrv_exec_program (PRU_NUM, "./lidDmx.bin");
+// Wwait for the event Completion from PRU, returns PRU_EVTOUT_0 number
+int n = prussdrv_pru_wait_event (PRU_EVTOUT_0);
+printf("PRU program completed, event number %d. \n", n);
+// Disable PRU and close memory mappings
+
+prussdrv_pru_disable(PRU_NUM);
+prussdrv_exit ();
+
 
     return 0;
 }
+
 
