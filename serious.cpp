@@ -16,6 +16,9 @@
 #include <ctype.h>
 #include <limits>  //   //?
 #include <stdio_ext.h>
+#include <iostream>
+#include <fstream>
+#include <string>
 // faire menage dans les includes a la fin
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
@@ -31,7 +34,45 @@
 //  ca ca onne une erreuree par ce que pas dasn foncr Printf("POULET MOTHERFUCKER");
 
 // Experimental Stuff End ///
+std::string testOut[10];  //testOut est array que je veut sortir en csv
 
+int readfile()
+{
+std::string line;
+std::ifstream myfile ("configuration.txt");
+if (myfile.is_open())
+{int i = 2;  // 2 par ce que 1 c'est usrName
+while ( getline (myfile,line) )
+{
+
+std::cout << line << '\n';
+
+testOut[i] = line;
+i++;
+}
+std::cout << "sale cave" << '\n' << testOut[4] << '\n' << testOut[1];
+// 1 est operator name 2 est jadore donc 
+std::cout << '\n';
+myfile.close();
+}
+else {
+std::cout << "Unable to open File \n";
+exit (EXIT_FAILURE);
+}
+return 0;
+}
+
+int writeCsv(){
+
+std::ofstream myfile;
+myfile.open ("results.csv", std::ios::app);
+if (myfile.is_open()){
+printf("jesus bolt \n");
+myfile << testOut[1] << ',' << testOut[4] << '\n';
+myfile.close();
+}
+else std::cout << "unable to open file";
+}
 
 char buffer[256];
 char bar_value;
@@ -194,14 +235,22 @@ kbin();
 int stringLength = strlen(name);
 for (int i = 0; i < stringLength; i++) {
 usrName[i] = name[i];
+testOut[1] = usrName;
 printf("Operator name = %s \n", usrName);
 }
 printf("stringLength = %d \n", stringLength);
 
 // le return de kbin c'est toujours name
 printf("\nWelcome %s \n\nMake your Supervivsor approve these settings: \n\n", name);
-printf("The Program will read from a file and display the content \n");
-printf("The file will have all the information about the unit \n\n");
+
+// faut rajouter les includes
+readfile();
+
+
+//printf("The Program will read from a file and display the content \n");
+//printf("The file will have all the information about the unit \n\n");
+
+
 printf("Enter your Supervisor Name:\a");
 kbin();
 stringLength = strlen(name);
@@ -234,6 +283,9 @@ printf("Scan DUT (Device Under Test) Bar Code to Beiging Test \n");
 	
 //    bzero(buffer,256);
 //    printf("reading barcode:");
+
+writeCsv();
+
     scan_keyascii();
 printf("\n\n\nThe Test is Executing\n");
 // Now pour Modifier la valeur de ce que je desire configurer
