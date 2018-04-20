@@ -178,19 +178,7 @@ int scan_keyascii()
 
    return 0;
 }
-   
-   
-   /*!
- \file      Example1.cpp
 
- \brief     Super COOL Stuff,  also Richard was fired today!
- \	    Good Drift Wood Riddance!
- \author    Marcel Bergeron   Based on some work from a french guy
- \version   0.1
- \date      05/01/2011
- */
-
-                
 
 // Set dev adress
 char bigul1[]={0x4c, 0x49, 0x44, 0x00, 0x00, 0x4e, 0x03, 0x02, 0x00, 0x03, 0xff, 0x4c, 0x55, 0x4d};
@@ -215,9 +203,8 @@ int kbin() //keyboard Input
 std::cin.get( name, 14);
 std::cin.clear();
 __fpurge(stdin);
-//std::cin.ignore(8, '\n') ; du stuff qui marche pas
-//fflush(stdin);     entoucas dans mon cas
-//__fpurge(stdin); original works
+// Du stuff pour clearer le input buffer du  clavier
+
 
 return 1;
 }
@@ -381,38 +368,40 @@ static void LOCAL_unexport_pin (int pin) {
 }
 
 // From http://www.abc.se/~m6695/udp.html
-static void LOCAL_udp_listen () {
-	struct sockaddr_in si_me, si_other;
-	int s, i, idx, slen=sizeof(si_other);
-	char buf[UDP_BUFLEN];
-	int channel, channels, value;
-	int packet_length;
+// Pense peut men passer mais pas deleter toutu de suite
 
-	if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1)
-		diep("socket");
+//static void LOCAL_udp_listen () {
+//	struct sockaddr_in si_me, si_other;
+//	int s, i, idx, slen=sizeof(si_other);
+//	char buf[UDP_BUFLEN];
+//	int channel, channels, value;
+//	int packet_length;
 
-	memset((char *) &si_me, 0, sizeof(si_me));
-	si_me.sin_family = AF_INET;
-	si_me.sin_port = htons(UDP_PORT);
-	si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-	if (bind(s, &si_me, sizeof(si_me))==-1)
-		diep("bind");
+//	if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1)
+//		diep("socket");
 
-	for (i=0; i<UDP_BUFLEN; i++) {
-		buf[i] = 0;
-	}
+//	memset((char *) &si_me, 0, sizeof(si_me));
+//	si_me.sin_family = AF_INET;
+//	si_me.sin_port = htons(UDP_PORT);
+//	si_me.sin_addr.s_addr = htonl(INADDR_ANY);
+// compuile pas// 	if (bind(s, &si_me, sizeof(si_me))==-1)
+//		diep("bind");
 
-	while (1) {
-		packet_length = recvfrom(s, buf, UDP_BUFLEN, 0, &si_other, &slen);
-		if (packet_length == -1) {
-			diep("recvfrom()");
-		}
-    sscanf(buf, "%d", &channels);
+//	for (i=0; i<UDP_BUFLEN; i++) {
+//		buf[i] = 0;
+//	}
 
-    // server exit condition
-    if (channels < 0) {
-      break;
-    }
+//	while (1) {
+//		packet_length = recvfrom(s, buf, UDP_BUFLEN, 0, &si_other, &slen);
+//		if (packet_length == -1) {
+//			diep("recvfrom()");
+//		}
+//    sscanf(buf, "%d", &channels);
+
+//    // server exit condition
+//    if (channels < 0) {
+//      break;
+//    }
 
     pruDataMem_byte[DMX_CHANNELS_ADDR] = channels+1;
     channel = 0;

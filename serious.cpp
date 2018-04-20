@@ -1,3 +1,5 @@
+#include <prussdrv.h>
+#include <pruss_intc_mapping.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -35,7 +37,7 @@
 
 // Experimental Stuff End ///
 std::string testOut[10];  //testOut est array que je veut sortir en csv
-
+int god = 0;
 int readfile()
 {
 std::string line;
@@ -62,6 +64,7 @@ exit (EXIT_FAILURE);
 return 0;
 }
 
+
 int writeCsv(){
 
 std::ofstream myfile;
@@ -72,6 +75,27 @@ myfile << testOut[1] << ',' << testOut[4] << '\n';
 myfile.close();
 }
 else std::cout << "unable to open file";
+}
+
+char usrPass[14];
+int passAuth(){ 
+std::string root = "root";
+std::string password = "password";
+if (usrPass == root){
+// vas remplacer par case NON PEUT PAS single expression multiple  cases
+god =1;
+//usrPass = root;
+printf("je suis une huiter man!");
+}
+// marcheras pas switch(1){
+if (usrPass == password){
+printf("Good!");
+}
+
+else {
+printf("You are not qualified to run this station Motherfucker\n");
+exit(EXIT_FAILURE);
+}
 }
 
 char buffer[256];
@@ -205,7 +229,7 @@ char name[14];
 char usrName[14];
 char supName[14];
 char supPass[14];
-
+//char usrPass[14];
 
 int kbin() //keyboard Input
 
@@ -226,7 +250,13 @@ char string;
 int main()
 {
 
-// marche pfas std::cout << string(50, '\n');
+if(getuid()!=0){
+printf("You must run this program as root. EXITING.\n");
+exit(EXIT_FAILURE);
+}
+
+// Initialize structure used by the prussdrv_pruintc_intc ca a lair
+//tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
 printf("\n\n\n\n\n");
 printf("Welcome to the LIDLUM Linear Serie Automated Test \n \n");
@@ -235,23 +265,34 @@ kbin();
 int stringLength = strlen(name);
 for (int i = 0; i < stringLength; i++) {
 usrName[i] = name[i];
-testOut[1] = usrName;
+testOut[1] = usrName;  // teporaire log genre ostie de chien sale
 printf("Operator name = %s \n", usrName);
 }
 printf("stringLength = %d \n", stringLength);
+printf("Welcomme %s \nInput Operator Password:", usrName);
+kbin();
+// passer a une variable
+stringLength = strlen(name);
+for (int i = 0; i < stringLength; i++) {
+usrPass[i] = name[i];
+}
 
-// le return de kbin c'est toujours name
-printf("\nWelcome %s \n\nMake your Supervivsor approve these settings: \n\n", name);
+passAuth();
 
+if (god == 0){// le return de kbin c'est toujours name
+printf("\n\nMake your Supervivsor approve these settings: \n\n");
+}
 // faut rajouter les includes
 readfile();
 
 
 //printf("The Program will read from a file and display the content \n");
 //printf("The file will have all the information about the unit \n\n");
+// non ca je lai mis apres la logique.
 
 
-printf("Enter your Supervisor Name:\a");
+if(god == 0){
+printf("Enter Supervisor Name:\a");
 kbin();
 stringLength = strlen(name);
 for (int i = 0; i < stringLength; i++){
@@ -259,12 +300,22 @@ supName[i] = name[i];
 }
 printf("stringLength = %d \n", stringLength);
 printf("sup name = %s \n", name);
-printf("Enter your Supervisor Password:\a");
+printf("Enter Supervisor Password:\a");
+// metre la le usr root pass
+//if(god = 0) {
 kbin();
+//}
+//else printf("fuck");
 stringLength = strlen(name);
 for (int i = 0; i < stringLength; i++) {
 supPass[i] = name[i];
+} // end of god 0
+//}
+//else printf("Fuck");
+//}
 }
+
+//if (god = 0){
 printf("supPass = %s \n", supPass);
 
 
@@ -294,7 +345,7 @@ bigul1[9]={input};
 bigul2[9]={input};
 //bigul5
 
-//printf(" The value of bigul1 9 is %d \n", bigul1[9]);
+printf(" The value of bigul1 9 is %d \n", bigul1[9]);
 
 // End of New Stuff
 
@@ -350,17 +401,33 @@ bigul2[9]={input};
 printf("This is where we mess with the pruss \n");
 
 // Second part of the test, Pruss Stuff for the DMX
+
+
 // Initialize structure used by prussdrv_pruintc_intc
 // PRUSS_INTC_INITDATA is found in the pruss_intc_mapping.h
-
 tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 // Allocate and initialyze Memory
 prussdrv_init ();
 prussdrv_open (PRU_EVTOUT_0);
 // Maps PRU Interrupts
 prussdrv_pruintc_init(&pruss_intc_initdata); 
+
+// Maintenant ecrire une valeur dans la memoire du PRUSS
+// Motherfucker
+// safe pour le debut mais modify
+unsigned int percent = 50;
+prussdrv_pru_write_memory(PRUSS0_PRU0_DATARAM, 0, &percent, 4);
+unsigned int sample = 10;
+prussdrv_pru_write_memory(PRUSS0_PRU0_DATARAM, 1, &sample, 4);
+// quand devmem2 ces adresse 0x4a300000
+// ca donne 0x32 qui est 50 dec et 0x4a300004 donne BB
+
+// up to this point it fucking works!!!!!
+//but I should realy split the program ?  francois?
+
+
 // Load and Execute the PRU Programm on the PRU
-prussdrv_exec_program (PRU_NUM, "./lidDmx.bin");
+prussdrv_exec_program (PRU_NUM, "./toBeDmx.bin");
 // Wwait for the event Completion from PRU, returns PRU_EVTOUT_0 number
 int n = prussdrv_pru_wait_event (PRU_EVTOUT_0);
 printf("PRU program completed, event number %d. \n", n);
